@@ -115,6 +115,7 @@ class IscManager:
                 # but we do this to make the templates work
                 # without upgrade
                 interface["gateway"] = system.gateway
+                interface["name_servers_search"] = system.name_servers_search
 
                 mac  = interface["mac_address"]
                 if interface["interface_type"] in ("slave","bond_slave","bridge_slave"):
@@ -161,6 +162,9 @@ class IscManager:
                 interface["owner"] = blended_system["name"]
                 interface["enable_gpxe"] = blended_system["enable_gpxe"]
 
+                if not interface["netboot_enabled"] and interface['static']:
+                    continue
+
                 interface["filename"] = "/pxelinux.0"
                 # can't use pxelinux.0 anymore
                 if distro is not None:
@@ -183,12 +187,12 @@ class IscManager:
 
         # we are now done with the looping through each interface of each system
         metadata = {
-           "date"           : time.asctime(time.gmtime()),
-           "cobbler_server" : self.settings.server,
-           "next_server"    : self.settings.next_server,
-           "elilo"          : elilo,
-           "yaboot"         : yaboot,
-           "dhcp_tags"      : dhcp_tags
+           "date"                : time.asctime(time.gmtime()),
+           "cobbler_server"      : self.settings.server,
+           "next_server"         : self.settings.next_server,
+           "elilo"               : elilo,
+           "yaboot"              : yaboot,
+           "dhcp_tags"           : dhcp_tags
         }
 
         if self.logger is not None:
